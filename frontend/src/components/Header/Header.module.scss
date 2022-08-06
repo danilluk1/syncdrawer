@@ -1,0 +1,118 @@
+$toolsIconWidth: 30px;
+$toolsIconHeight: 30px;
+$rootHeight: 80px;
+
+.root{
+  height: $rootHeight;
+  width: 100vw;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  &__menu {
+    height: calc(#{$rootHeight} / 2);
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    padding: 0px 15px;
+
+    &__tools{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__right {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &__sizeMenu {
+    height: calc(#{$rootHeight} / 2);
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    padding: 0px 15px;
+
+    span {
+      margin-right: 15px;
+    }
+
+    input {
+      width: 43px;
+      border: 1px solid black;
+      font-weight: bold;
+    }
+  }
+}
+
+%tool{
+  width: $toolsIconWidth;
+  height: $toolsIconHeight;
+  margin-right: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  &:hover{
+    border: 1px solid cyan;
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+}
+
+.brush{
+  @extend %tool;
+  background: url(../../assets/icons/brush.png) no-repeat center;
+}
+
+.rectangle{
+  @extend %tool;
+  background: url(../../assets/icons/rect.png) no-repeat center;
+}
+
+.circle{
+  @extend %tool;
+  background: url(../../assets/icons/circle.png) no-repeat center;
+}
+
+.eraser{
+  @extend %tool;
+  background: url(../../assets/icons/eraser.png) no-repeat center;
+}
+
+.line{
+  @extend %tool;
+  background: url(../../assets/icons/line.png) no-repeat center;
+}
+
+.colorPicker{
+  @extend %tool;
+  background: url(../../assets/icons/colorPicker.png) no-repeat center;
+}
+
+.undo{
+  @extend %tool;
+  background: url(../../assets/icons/undo.png) no-repeat center;
+}
+
+.redo{
+  @extend %tool;
+  background: url(../../assets/icons/redo.png) no-repeat center;
+}
+
+.save{
+  @extend %tool;
+  background: url(../../assets/icons/save.png) no-repeat center;
+}
