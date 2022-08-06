@@ -17,10 +17,14 @@ const WorkingArea = observer(() => {
     toolStore.changeTool(new Brush(canvasRef.current));
   }, []);
 
+  const onCanvasMouseDown = () => {
+    canvasStore.saveCanvasState();
+  }
+
   return (
     <main>
       <div className={styles.root}>
-        <canvas ref={canvasRef} width="800" height="600"></canvas>
+        <canvas onMouseDown={onCanvasMouseDown}ref={canvasRef} width="800" height="600"></canvas>
       </div>
     </main>
   );

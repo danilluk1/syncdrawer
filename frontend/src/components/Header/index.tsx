@@ -6,10 +6,13 @@ import Brush from "../../models/tools/Brush";
 import { Tools } from "../../models/tools/Tools";
 import Rectangle from "../../models/tools/Rectangle";
 import Circle from "../../models/tools/Circle";
+import Eraser from "../../models/tools/Eraser";
+import Line from "../../models/tools/Line";
+import { saveAs } from "file-saver";
 
 const Header = () => {
   const selectTool = (tool: Tools) => {
-    if (canvasStore.canvas === null) return;
+    if (!canvasStore.canvas) return;
 
     switch (tool) {
       case Tools.Brush:
@@ -21,7 +24,18 @@ const Header = () => {
       case Tools.Circle:
         toolStore.changeTool(new Circle(canvasStore.canvas));
         break;
+      case Tools.Eraser:
+        toolStore.changeTool(new Eraser(canvasStore.canvas));
+        break;
+      case Tools.Line:
+        toolStore.changeTool(new Line(canvasStore.canvas));
+        break;
     }
+  };
+  
+  const onSaveClick = () => {
+    if (!canvasStore.canvas) return;
+    saveAs(canvasStore.canvas.toDataURL(), Date.now().toString());
   };
 
   return (
@@ -41,10 +55,15 @@ const Header = () => {
               onClick={() => selectTool(Tools.Circle)}
               className={styles.circle}
             ></div>
-            <div className={styles.eraser}></div>
-            <div className={styles.line}></div>
+            <div
+              onClick={() => selectTool(Tools.Eraser)}
+              className={styles.eraser}
+            ></div>
+            <div
+              className={styles.line}
+              onClick={() => selectTool(Tools.Line)}
+            ></div>
             <div>
-              <label htmlFor="stroke-color">Цвет </label>
               <input
                 id="stroke-color"
                 onChange={(e) => toolStore.setLineColor(e.target.value)}
@@ -53,9 +72,15 @@ const Header = () => {
             </div>
           </div>
           <div className={styles.root__menu__right}>
-            <div className={styles.undo}></div>
-            <div className={styles.redo}></div>
-            <div className={styles.save}></div>
+            <div
+              className={styles.undo}
+              onClick={() => canvasStore.undoCanvas()}
+            ></div>
+            <div
+              className={styles.redo}
+              onClick={() => canvasStore.redoCanvas()}
+            ></div>
+            <div className={styles.save} onClick={onSaveClick}></div>
           </div>
         </div>
         <div className={styles.root__sizeMenu}>
