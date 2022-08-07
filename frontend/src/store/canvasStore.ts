@@ -10,10 +10,10 @@ class CanvasStore {
     makeAutoObservable(this);
   }
 
-  createSocket(name: string, room: string) {
+  createSocket(name: string, room: string, onDraw: any) {
     if (!this.canvas) return;
 
-    this.socket = new SocketHandler(name, room, this.canvas);
+    this.socket = new SocketHandler(name, room, this.canvas, onDraw);
   }
 
   setCanvas(canvas: HTMLCanvasElement) {

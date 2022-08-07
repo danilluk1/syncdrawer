@@ -1,13 +1,21 @@
 import SocketHandler from "../socket/SocketHandler";
 
+export enum Tools {
+  Brush,
+  Rectangle,
+  Circle,
+  Eraser,
+  Line,
+  ColorPicker
+}
+
 export default class Tool {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   isMouseDown: boolean;
   socket: SocketHandler | null;
 
-
-  constructor(canvas: HTMLCanvasElement, socket: SocketHandler | null) {
+  constructor(canvas: HTMLCanvasElement, socket : SocketHandler | null = null) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -19,9 +27,8 @@ export default class Tool {
     this.canvas.onmouseup = this.mouseUp.bind(this);
     this.canvas.onmousemove = this.mouseMove.bind(this);
 
-    this.socket = socket;
-
     this.isMouseDown = false;
+    this.socket = socket;
   }
 
   setThinkness(value: number) {

@@ -3,7 +3,7 @@ import styles from "./Header.module.scss";
 import canvasStore from "../../store/canvasStore";
 import toolStore from "../../store/toolStore";
 import Brush from "../../models/tools/Brush";
-import { Tools } from "../../models/tools/Tools";
+import { Tools } from "../../models/tools/Tool";
 import Rectangle from "../../models/tools/Rectangle";
 import Circle from "../../models/tools/Circle";
 import Eraser from "../../models/tools/Eraser";
@@ -22,17 +22,35 @@ const Header = () => {
         toolStore.changeTool(new Brush(canvasStore.canvas, canvasStore.socket));
         break;
       case Tools.Rectangle:
-        toolStore.changeTool(new Rectangle(canvasStore.canvas, canvasStore.socket));
+        toolStore.changeTool(
+          new Rectangle(canvasStore.canvas, canvasStore.socket)
+        );
         break;
       case Tools.Circle:
-        toolStore.changeTool(new Circle(canvasStore.canvas, canvasStore.socket));
+        toolStore.changeTool(
+          new Circle(canvasStore.canvas, canvasStore.socket)
+        );
         break;
       case Tools.Eraser:
-        toolStore.changeTool(new Eraser(canvasStore.canvas, canvasStore.socket));
+        toolStore.changeTool(
+          new Eraser(canvasStore.canvas, canvasStore.socket)
+        );
         break;
       case Tools.Line:
         toolStore.changeTool(new Line(canvasStore.canvas, canvasStore.socket));
         break;
+    }
+  };
+
+  const onDraw = (drawObj: any) => {
+    let ctx = canvasStore.canvas?.getContext("2d");
+    if (!ctx) return;
+
+    switch (drawObj.figure) {
+      case Tools.Brush:
+        Brush.draw(ctx, drawObj.x, drawObj.y);
+        break;
+      default: ctx.beginPath();
     }
   };
 
@@ -44,7 +62,7 @@ const Header = () => {
   const onConnectClick = () => {
     if (!room || !username) return;
 
-    canvasStore.createSocket(username, room);
+    canvasStore.createSocket(username, room, onDraw);
   };
 
   return (

@@ -23,7 +23,7 @@ async function entryPoint() {
           }
           break;
 
-        case "drawRectangle":
+        case "draw":
           roomClients = roomsStore.getRoomClients(message.room);
           if (!roomClients) return;
 
@@ -33,6 +33,17 @@ async function entryPoint() {
             }
           }
           break;
+          
+        case "finish":
+          roomClients = roomsStore.getRoomClients(message.room);
+          if (!roomClients) return;
+
+          for (const client of roomClients) {
+            if (client.socket.readyState === WebSocket.OPEN) {
+              client.socket.send(JSON.stringify(message));
+            }
+          }
+        break;
       }
     });
     ws.send("Connection establish");

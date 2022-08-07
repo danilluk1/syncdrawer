@@ -28,33 +28,25 @@ export default class Rectangle extends Tool {
   }
 
   mouseMove(event: MouseEvent): void {
-    if (this.isMouseDown) {
-      this.drawRect(
-        event.offsetX,
-        event.offsetY,
-        this.beginX - event.offsetX,
-        this.beginY - event.offsetY
-      );
-      
-      if(!this.socket) return;
-
-      this.socket.drawRectangle(
-        event.offsetX,
-        event.offsetY,
-        this.beginX - event.offsetX,
-        this.beginY - event.offsetY
-      );
-    }
+    // if (this.isMouseDown) {
+    //   draw(
+    //     this.ctx,
+    //     event.offsetX,
+    //     event.offsetY,
+    //     this.beginX - event.offsetX,
+    //     this.beginY - event.offsetY
+    //   );
+    // }
   }
 
-  drawRect(x: number, y: number, width: number, height: number) {
-    const image = new Image();
-    image.src = this.saved;
-    image.onload = () => {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.beginPath();
-      this.ctx.strokeRect(x, y, width, height);
-    };
+  static draw(x: number, y: number, width: number, height: number) {
+    // const image = new Image();
+    // image.src = this.saved;
+    // image.onload = () => {
+    //   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    //   this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
+    //   this.ctx.beginPath();
+    //   this.ctx.strokeRect(x, y, width, height);
+    // };
   }
 }

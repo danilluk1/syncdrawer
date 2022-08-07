@@ -1,21 +1,26 @@
-export default class SocketHandler {
-  socket: WebSocket = new WebSocket(`${process.env.REACT_APP_BACKEND}`);
-  name: string;
-  room: string;
-  canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D | null;
-  saved: string = "";
+import { Tools } from "../tools/Tool";
 
-  constructor(name: string, room: string, canvas: HTMLCanvasElement) {
+export default class SocketHandler {
+  private socket: WebSocket = new WebSocket(`${process.env.REACT_APP_BACKEND}`);
+  private name: string;
+  private room: string;
+  private onDraw: (drawObj: any) => void;
+
+  constructor(
+    name: string,
+    room: string,
+    canvas: HTMLCanvasElement,
+    onDraw: (drawObj: any) => void
+  ) {
     if (!this.socket) throw new Error("Problem while creating WebSocket");
 
-    this.canvas = canvas;
-    this.ctx = this.canvas.getContext("2d");
     this.name = name;
     this.room = room;
 
     this.socket.onopen = this.onOpen.bind(this);
     this.socket.onmessage = this.onMessage.bind(this);
+
+    this.onDraw = onDraw;
   }
 
   onOpen() {
@@ -27,9 +32,31 @@ export default class SocketHandler {
     this.socket.send(JSON.stringify(data));
   }
 
+  finishFigure() {
+    const data = {
+      method: "finish",
+      room: this.room,
+      username: this.name,
+    };
+    this.socket.send(JSON.stringify(data));
+  }
+
+  newBrushInfo(x: number, y: number) {
+    const data = {
+      method: "draw",
+      figure: Tools.Brush,
+      x,
+      y,
+      room: this.room,
+      username: this.name,
+    };
+    this.socket.send(JSON.stringify(data));
+  }
+
   drawRectangle(x: number, y: number, width: number, height: number) {
     const data = {
-      method: "drawRectangle",
+      method: "draw",
+      figure: Tools.Rectangle,
       x,
       y,
       width,
@@ -41,19 +68,29 @@ export default class SocketHandler {
     this.socket.send(JSON.stringify(data));
   }
 
+  drawLine(x: number, y: number) {
+    const data = {
+      method: "draw",
+      figure: Tools.Brush,
+      x,
+      y,
+      room: this.room,
+      username: this.name,
+    };
+
+    this.socket.send(JSON.stringify(data));
+  }
+
   onMessage(message: MessageEvent) {
-    let info: any;
+    let data: any;
     try {
-      console.log(message.data);
-      info = JSON.parse(message.data.toString());
-    } catch (e) {}
-    if (!info) return;
-    switch (info.method) {
-      case "drawRectangle":
-        console.log("123");
-        this.ctx?.beginPath();
-        this.ctx?.strokeRect(info.x, info.y, 300, 300);
-        break;
+      data = JSON.parse(message.data.toString());
+    } catch (e) {
+      return;
+    }
+    switch (data.method) {
+      default:
+        this.onDraw(data);
     }
   }
 }

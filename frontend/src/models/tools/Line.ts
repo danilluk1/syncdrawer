@@ -5,6 +5,7 @@ export default class Line extends Tool {
   beginX: number;
   beginY: number;
   saved: string;
+
   constructor(canvas: HTMLCanvasElement, socket: SocketHandler | null = null) {
     super(canvas, socket);
 
