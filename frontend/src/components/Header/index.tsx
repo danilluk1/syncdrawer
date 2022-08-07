@@ -9,33 +9,42 @@ import Circle from "../../models/tools/Circle";
 import Eraser from "../../models/tools/Eraser";
 import Line from "../../models/tools/Line";
 import { saveAs } from "file-saver";
+import { useParams } from "react-router-dom";
 
 const Header = () => {
+  const [username, setUsername] = React.useState("User");
+  const { room } = useParams();
   const selectTool = (tool: Tools) => {
     if (!canvasStore.canvas) return;
 
     switch (tool) {
       case Tools.Brush:
-        toolStore.changeTool(new Brush(canvasStore.canvas));
+        toolStore.changeTool(new Brush(canvasStore.canvas, canvasStore.socket));
         break;
       case Tools.Rectangle:
-        toolStore.changeTool(new Rectangle(canvasStore.canvas));
+        toolStore.changeTool(new Rectangle(canvasStore.canvas, canvasStore.socket));
         break;
       case Tools.Circle:
-        toolStore.changeTool(new Circle(canvasStore.canvas));
+        toolStore.changeTool(new Circle(canvasStore.canvas, canvasStore.socket));
         break;
       case Tools.Eraser:
-        toolStore.changeTool(new Eraser(canvasStore.canvas));
+        toolStore.changeTool(new Eraser(canvasStore.canvas, canvasStore.socket));
         break;
       case Tools.Line:
-        toolStore.changeTool(new Line(canvasStore.canvas));
+        toolStore.changeTool(new Line(canvasStore.canvas, canvasStore.socket));
         break;
     }
   };
-  
+
   const onSaveClick = () => {
     if (!canvasStore.canvas) return;
     saveAs(canvasStore.canvas.toDataURL(), Date.now().toString());
+  };
+
+  const onConnectClick = () => {
+    if (!room || !username) return;
+
+    canvasStore.createSocket(username, room);
   };
 
   return (
@@ -72,6 +81,11 @@ const Header = () => {
             </div>
           </div>
           <div className={styles.root__menu__right}>
+            <input
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
+            />
+            <button onClick={onConnectClick}>Connect!</button>
             <div
               className={styles.undo}
               onClick={() => canvasStore.undoCanvas()}

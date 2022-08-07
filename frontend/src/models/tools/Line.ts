@@ -1,11 +1,12 @@
+import SocketHandler from "../socket/SocketHandler";
 import Tool from "./Tool";
 
 export default class Line extends Tool {
   beginX: number;
   beginY: number;
   saved: string;
-  constructor(canvas: HTMLCanvasElement) {
-    super(canvas);
+  constructor(canvas: HTMLCanvasElement, socket: SocketHandler | null = null) {
+    super(canvas, socket);
 
     this.beginX = 0;
     this.beginY = 0;

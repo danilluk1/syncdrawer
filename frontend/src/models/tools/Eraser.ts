@@ -1,9 +1,10 @@
+import SocketHandler from "../socket/SocketHandler";
 import Tool from "./Tool";
 
 export default class Eraser extends Tool {
   currentColor: string;
-  constructor(canvas: HTMLCanvasElement) {
-    super(canvas);
+  constructor(canvas: HTMLCanvasElement, socket: SocketHandler | null = null) {
+    super(canvas, socket);
     this.currentColor = this.ctx.fillStyle.toString();
   }
 

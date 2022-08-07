@@ -1,14 +1,27 @@
 import React from "react";
-import { Provider } from "react-redux";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import WorkingArea from "./components/WorkingArea";
 
 function App() {
   return (
-    <div>
-      <Header />
-      <WorkingArea />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/:room"
+          element={
+            <div>
+              <Header />
+              <WorkingArea />
+            </div>
+          }
+        />
+        <Route
+          path="*"
+          element={<Navigate to={`f${(+new Date()).toString(16)}`} />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

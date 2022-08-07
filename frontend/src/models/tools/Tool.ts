@@ -1,9 +1,13 @@
+import SocketHandler from "../socket/SocketHandler";
+
 export default class Tool {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   isMouseDown: boolean;
+  socket: SocketHandler | null;
 
-  constructor(canvas: HTMLCanvasElement) {
+
+  constructor(canvas: HTMLCanvasElement, socket: SocketHandler | null) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -14,6 +18,8 @@ export default class Tool {
     this.canvas.onmousedown = this.mouseDown.bind(this);
     this.canvas.onmouseup = this.mouseUp.bind(this);
     this.canvas.onmousemove = this.mouseMove.bind(this);
+
+    this.socket = socket;
 
     this.isMouseDown = false;
   }

@@ -1,9 +1,10 @@
 import e from "express";
+import SocketHandler from "../socket/SocketHandler";
 import Tool from "./Tool";
 
 export default class Brush extends Tool {
-  constructor(canvas: HTMLCanvasElement) {
-    super(canvas);
+  constructor(canvas: HTMLCanvasElement, socket: SocketHandler | null = null) {
+    super(canvas, socket);
   }
 
 

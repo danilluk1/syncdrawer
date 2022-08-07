@@ -1,11 +1,19 @@
 import { makeAutoObservable } from "mobx";
+import SocketHandler from "../models/socket/SocketHandler";
 
 class CanvasStore {
+  socket: SocketHandler | null = null;
   canvas: HTMLCanvasElement | null = null;
   redos: string[] = [];
   undos: string[] = [];
   constructor() {
     makeAutoObservable(this);
+  }
+
+  createSocket(name: string, room: string) {
+    if (!this.canvas) return;
+
+    this.socket = new SocketHandler(name, room, this.canvas);
   }
 
   setCanvas(canvas: HTMLCanvasElement) {

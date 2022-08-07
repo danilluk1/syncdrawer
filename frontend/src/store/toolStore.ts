@@ -1,5 +1,4 @@
 import { makeAutoObservable } from "mobx";
-import { CITEXT } from "sequelize/types";
 import Tool from "../models/tools/Tool";
 
 class ToolStore {
