@@ -18,32 +18,23 @@ async function entryPoint() {
 
           for (const client of roomClients) {
             if (client.socket.readyState === WebSocket.OPEN) {
-              client.socket.send(`User ${message.username} connected`);
+              if (client.name !== message.username)
+                client.socket.send(JSON.stringify(message));
             }
           }
           break;
 
-        case "draw":
+        default:
           roomClients = roomsStore.getRoomClients(message.room);
           if (!roomClients) return;
 
           for (const client of roomClients) {
             if (client.socket.readyState === WebSocket.OPEN) {
-              client.socket.send(JSON.stringify(message));
+              if (client.name !== message.username)
+                client.socket.send(JSON.stringify(message));
             }
           }
           break;
-          
-        case "finish":
-          roomClients = roomsStore.getRoomClients(message.room);
-          if (!roomClients) return;
-
-          for (const client of roomClients) {
-            if (client.socket.readyState === WebSocket.OPEN) {
-              client.socket.send(JSON.stringify(message));
-            }
-          }
-        break;
       }
     });
     ws.send("Connection establish");
@@ -53,9 +44,3 @@ async function entryPoint() {
 entryPoint();
 
 console.log("Server started");
-
-// const ws = new WebSocket("ws://localhost:5000/");
-
-// ws.on("open", function open() {
-//   ws.send("ws working");
-// });

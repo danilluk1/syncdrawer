@@ -15,6 +15,7 @@ export default class Circle extends Tool {
   }
 
   mouseDown(event: MouseEvent) {
+    this.socket?.startFigure(event.offsetX, event.offsetY);
     this.isMouseDown = true;
     this.ctx.beginPath();
     this.ctx.moveTo(event.offsetX, event.offsetY);
@@ -26,11 +27,20 @@ export default class Circle extends Tool {
 
   mouseUp(event: MouseEvent) {
     this.isMouseDown = false;
+    this.socket?.finishFigure(event.offsetX, event.offsetY);
   }
 
   mouseMove(event: MouseEvent): void {
     if (this.isMouseDown) {
-      this.drawCircle(
+      Circle.draw(
+        this.ctx,
+        this.saved,
+        event.offsetX,
+        event.offsetY,
+        this.beginX - event.offsetX,
+        this.beginY - event.offsetY
+      );
+      this.socket?.drawCircle(
         event.offsetX,
         event.offsetY,
         this.beginX - event.offsetX,
@@ -39,15 +49,22 @@ export default class Circle extends Tool {
     }
   }
 
-  drawCircle(x: number, y: number, width: number, height: number) {
+  static draw(
+    ctx: CanvasRenderingContext2D,
+    saved: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ) {
     const image = new Image();
-    image.src = this.saved;
+    image.src = saved;
     image.onload = () => {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.beginPath();
-      this.ctx.arc(x, y, Math.abs(width), 0, 2 * Math.PI, false);
-      this.ctx.stroke();
+      ctx.clearRect(0, 0, 800, 600);
+      ctx.drawImage(image, 0, 0, 800, 600);
+      ctx.beginPath();
+      ctx.arc(x, y, Math.abs(width), 0, 2 * Math.PI, false);
+      ctx.stroke();
     };
   }
 }

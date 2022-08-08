@@ -10,9 +10,11 @@ import Eraser from "../../models/tools/Eraser";
 import Line from "../../models/tools/Line";
 import { saveAs } from "file-saver";
 import { useParams } from "react-router-dom";
+import { CITEXT } from "sequelize/types";
 
 const Header = () => {
   const [username, setUsername] = React.useState("User");
+  const [thinkness, setThinkness] = React.useState(1);
   const { room } = useParams();
   const selectTool = (tool: Tools) => {
     if (!canvasStore.canvas) return;
@@ -48,10 +50,67 @@ const Header = () => {
 
     switch (drawObj.figure) {
       case Tools.Brush:
-        Brush.draw(ctx, drawObj.x, drawObj.y);
+        Brush.draw(ctx, canvasStore.saved, drawObj.x, drawObj.y);
         break;
-      default: ctx.beginPath();
+      case Tools.Rectangle:
+        Rectangle.draw(
+          ctx,
+          canvasStore.saved,
+          drawObj.x,
+          drawObj.y,
+          drawObj.width,
+          drawObj.height
+        );
+        break;
+      case Tools.Circle:
+        Circle.draw(
+          ctx,
+          canvasStore.saved,
+          drawObj.x,
+          drawObj.y,
+          drawObj.width,
+          drawObj.height
+        );
+        break;
+
+      case Tools.Line:
+        Line.draw(
+          ctx,
+          canvasStore.saved,
+          drawObj.x,
+          drawObj.y,
+          drawObj.beginX,
+          drawObj.beginY
+        );
+        break;
+
+      case Tools.Eraser:
+        ctx.fillStyle = "#FFFFFF";
+        ctx.strokeStyle = "#FFFFFF";
+        let currColor = ctx.fillStyle.toString();
+        console.log(currColor);
+        Eraser.draw(ctx, canvasStore.saved, drawObj.x, drawObj.y);
+        ctx.fillStyle = currColor;
+        ctx.strokeStyle = currColor;
+        break;
     }
+  };
+
+  const onStartFigure = (x: number, y: number) => {
+    let ctx = canvasStore.canvas?.getContext("2d");
+    ctx?.moveTo(x, y);
+    canvasStore.saveCanvasState();
+  };
+
+  const onFinishFigure = (x: number, y: number) => {
+    let ctx = canvasStore.canvas?.getContext("2d");
+    if (!ctx) return;
+    ctx?.moveTo(x, y);
+    ctx.beginPath();
+  };
+
+  const onNewUser = (drawObj: any) => {
+    console.log(`New user ${drawObj.username} connected.`);
   };
 
   const onSaveClick = () => {
@@ -59,10 +118,36 @@ const Header = () => {
     saveAs(canvasStore.canvas.toDataURL(), Date.now().toString());
   };
 
+  const onUndo = () => {
+    canvasStore.undoCanvas();
+  };
+
+  const onRedo = () => {
+    canvasStore.redoCanvas();
+  };
+
+  const onNewColor = (color: string) => {};
+
+  const onNewThinkness = (think: number) => {
+    setThinkness(think);
+    toolStore.setLineWidth(think);
+  };
+
   const onConnectClick = () => {
     if (!room || !username) return;
 
-    canvasStore.createSocket(username, room, onDraw);
+    canvasStore.createSocket(
+      username,
+      room,
+      onDraw,
+      onNewUser,
+      onUndo,
+      onRedo,
+      onStartFigure,
+      onFinishFigure,
+      onNewThinkness,
+      onNewColor
+    );
   };
 
   return (
@@ -106,11 +191,18 @@ const Header = () => {
             <button onClick={onConnectClick}>Connect!</button>
             <div
               className={styles.undo}
-              onClick={() => canvasStore.undoCanvas()}
+              onClick={() => {
+                canvasStore.undoCanvas();
+                canvasStore.socket?.undo();
+              }}
             ></div>
             <div
               className={styles.redo}
-              onClick={() => canvasStore.redoCanvas()}
+              onClick={() => {
+                canvasStore.redoCanvas();
+                canvasStore.socket?.redo();
+              }
+            }
             ></div>
             <div className={styles.save} onClick={onSaveClick}></div>
           </div>
@@ -118,8 +210,12 @@ const Header = () => {
         <div className={styles.root__sizeMenu}>
           <span>Толщина линии</span>
           <input
-            defaultValue={1}
-            onChange={(e) => toolStore.setLineWidth(Number(e.target.value))}
+            value={thinkness}
+            onChange={(e) => {
+              canvasStore.socket?.newThinkness(Number(e.target.value));
+              setThinkness(Number(e.target.value));
+              toolStore.setLineWidth(Number(e.target.value));
+            }}
           />
         </div>
       </div>

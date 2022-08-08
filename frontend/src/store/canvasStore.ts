@@ -6,14 +6,38 @@ class CanvasStore {
   canvas: HTMLCanvasElement | null = null;
   redos: string[] = [];
   undos: string[] = [];
+  saved: string = "";
   constructor() {
     makeAutoObservable(this);
   }
 
-  createSocket(name: string, room: string, onDraw: any) {
+  createSocket(
+    name: string,
+    room: string,
+    onDraw: any,
+    onNewSocket: any,
+    onUndo: any,
+    onRedo: any,
+    onStartFigure: any,
+    onFinishFigure: any,
+    onNewThinkness: any,
+    onNewColor: any
+  ) {
     if (!this.canvas) return;
 
-    this.socket = new SocketHandler(name, room, this.canvas, onDraw);
+    this.socket = new SocketHandler(
+      name,
+      room,
+      this.canvas,
+      onDraw,
+      onNewSocket,
+      onUndo,
+      onRedo,
+      onStartFigure,
+      onFinishFigure,
+      onNewThinkness,
+      onNewColor
+    );
   }
 
   setCanvas(canvas: HTMLCanvasElement) {
@@ -23,7 +47,7 @@ class CanvasStore {
   saveCanvasState() {
     let canv = this.canvas?.toDataURL();
     if (!canv) return;
-
+    this.saved = canv;
     this.undos.push(canv);
   }
 
@@ -57,7 +81,6 @@ class CanvasStore {
 
       let data = this.undos.pop();
       if (!data) return;
-
       let img = new Image();
       img.src = data;
       img.onload = () => {

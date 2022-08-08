@@ -50,5 +50,4 @@ export default class Tool {
     throw new Error("Function not implemented");
   }
 
-  draw(x: number, y: number) {}
 }

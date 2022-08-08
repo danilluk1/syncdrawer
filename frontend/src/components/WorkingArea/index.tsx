@@ -1,4 +1,4 @@
-import React, { useCallback} from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import toolStore from "../../store/toolStore";
 import canvasStore from "../../store/canvasStore";
@@ -12,15 +12,12 @@ const WorkingArea = observer(() => {
     if (!canvasRef.current) return;
     canvasStore.setCanvas(canvasRef.current);
 
-    if (!canvasStore.socket) return;
     toolStore.changeTool(new Brush(canvasRef.current, canvasStore.socket));
   }, []);
 
   const onCanvasMouseDown = () => {
     canvasStore.saveCanvasState();
   };
-
-  const fetchData = useCallback(() => {}, []);
 
   return (
     <main>
